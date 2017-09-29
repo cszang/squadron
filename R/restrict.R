@@ -22,17 +22,13 @@ restrict <- function(f, var_id, var_land_id = "land_id", ids, par = FALSE) {
   lid <- ncvar_get(nc, var_land_id)
   ids <- ids[ids %in% lid]
   subsetchunk <- lid %in% ids
-  time <- seq(as.Date("1860-01-01"), length.out = 54787, by = "day")
+  time <- seq(as.Date("1950-01-01"), length.out = 54787, by = "day")
   m <- length(time)
   chunks <- list()
   pb <- txtProgressBar(min = 1, max = m)
   for (i in 1:m) {
-    perc_done <- paste0(round((i - 1)/m * 100, 1), "%")
-    if (i %% 100 == 0) {
-      cat(perc_done, "\n")
-    }
     thetime <- time[i]
-    chunk <- ncvar_get(nc, var_id, start = c(1, m),
+    chunk <- ncvar_get(nc, var_id, start = c(1, i),
                       count = c(-1, 1))[subsetchunk]
     chunks[[i]] <- data.table(
       landid = ids,
